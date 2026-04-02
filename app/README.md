@@ -2,7 +2,7 @@
 This folder contains the data folder and all scripts and source code that are required to run your simple search engine. 
 
 ### data
-This folder stores the text documents required to index. Here you can find a sample of 100 documents from `a.parquet` file from the original source.
+This folder stores the text documents required to index. Here you can find a sample of 100 documents from `e.parquet` file from the original source.
 
 ### mapreduce
 This folder stores the mapper `mapperx.py` and reducer `reducerx.py` scripts for the MapReduce pipelines.
