@@ -14,11 +14,12 @@ unset PYSPARK_PYTHON
 if hdfs dfs -test -e /data; then
     echo "Data already in HDFS, skipping prepare step."
 else
+    rm -f data/*.txt && \
     hdfs dfs -put -f e.parquet / && \
         spark-submit --driver-memory 512m prepare_data.py && \
         echo "Putting data to hdfs" && \
         hdfs dfs -put data / && \
         hdfs dfs -ls /data && \
-        hdfs dfs -ls /indexer/data && \
+        hdfs dfs -ls /input/data && \
         echo "done data preparation!"
 fi

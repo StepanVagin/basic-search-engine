@@ -11,6 +11,7 @@ services:
       - "9870:9870"
     volumes:
       - "./app:/app"
+      - hdfs-namenode:/usr/local/hadoop/hdfs/namenode
     networks:
       - spark-cluster
     depends_on:
@@ -29,6 +30,8 @@ services:
     image: firasj/spark-docker-cluster
     container_name: cluster-slave-1
     mem_limit: 1g
+    volumes:
+      - hdfs-datanode:/usr/local/hadoop/hdfs/datanode
     networks:
       - spark-cluster
     hostname: cluster-slave-1
@@ -47,6 +50,8 @@ services:
     image: cassandra
     container_name: cassandra-server
     mem_limit: 2g
+    volumes:
+      - cassandra-data:/var/lib/cassandra
     environment:
       MAX_HEAP_SIZE: "512M"
       HEAP_NEWSIZE: "128M"
@@ -60,6 +65,11 @@ services:
       interval: 15s
       timeout: 10s
       retries: 10
+
+volumes:
+  hdfs-namenode:
+  hdfs-datanode:
+  cassandra-data:
 
 networks:
   spark-cluster:

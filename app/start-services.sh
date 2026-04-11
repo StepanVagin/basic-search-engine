@@ -8,6 +8,15 @@ mkdir -p /root/.ssh
 ssh-keyscan -T 5 -p 22 -H cluster-slave-1 >> /root/.ssh/known_hosts 2>/dev/null
 ssh-keyscan -T 5 -p 2122 -H cluster-slave-1 >> /root/.ssh/known_hosts 2>/dev/null
 
+# Skip host key checking for Hadoop start scripts (covers master SSHing to itself)
+export HADOOP_SSH_OPTS="-o StrictHostKeyChecking=no -o LogLevel=ERROR"
+
+# Format NameNode on first run (no current/VERSION means unformatted)
+if [ ! -f "/usr/local/hadoop/hdfs/namenode/current/VERSION" ]; then
+    echo "Formatting NameNode..."
+    hdfs namenode -format -force
+fi
+
 # starting HDFS daemons
 $HADOOP_HOME/sbin/start-dfs.sh
 
@@ -29,9 +38,19 @@ until hdfs dfsadmin -safemode get &>/dev/null; do
 done
 echo "NameNode is ready."
 
-# subtool to perform administrator functions on HDFS
-# outputs a brief report on the overall HDFS filesystem
-hdfs dfsadmin -report
+# Wait for at least 1 live DataNode before writing to HDFS
+echo "Waiting for DataNode to register (may take a while under emulation)..."
+ATTEMPTS=0
+until hdfs dfsadmin -report 2>/dev/null | grep -q "Live datanodes"; do
+  ATTEMPTS=$((ATTEMPTS + 1))
+  if [ $ATTEMPTS -ge 60 ]; then
+    echo "WARNING: DataNode not registered after 3 minutes, proceeding anyway."
+    break
+  fi
+  sleep 3
+done
+echo "DataNode check done. Current report:"
+hdfs dfsadmin -report 2>/dev/null | head -5
 
 # If namenode in safemode then leave it
 hdfs dfsadmin -safemode leave

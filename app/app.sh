@@ -27,4 +27,4 @@ bash prepare_data.sh
 bash index.sh
 
 # Run the ranker
-bash search.sh "this is a query!"
+bash search.sh "English breakfast"
