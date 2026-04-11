@@ -2,7 +2,7 @@ services:
   cluster-master:
     image: firasj/spark-docker-cluster
     container_name: cluster-master
-    mem_limit: 4g
+    mem_limit: 6g
     ports:
       - "8088:8088"
       - "4040:4040"
@@ -29,7 +29,7 @@ services:
   cluster-slave-1:
     image: firasj/spark-docker-cluster
     container_name: cluster-slave-1
-    mem_limit: 1g
+    mem_limit: 4g
     volumes:
       - hdfs-datanode:/usr/local/hadoop/hdfs/datanode
     networks:
@@ -49,12 +49,12 @@ services:
   cassandra-server:
     image: cassandra
     container_name: cassandra-server
-    mem_limit: 2g
+    mem_limit: 3g
     volumes:
       - cassandra-data:/var/lib/cassandra
     environment:
-      MAX_HEAP_SIZE: "512M"
-      HEAP_NEWSIZE: "128M"
+      MAX_HEAP_SIZE: "1G"
+      HEAP_NEWSIZE: "256M"
     ports:
       # 7000 conflicts with macOS AirPlay Receiver; CQL is enough for host access
       - "9042:9042"

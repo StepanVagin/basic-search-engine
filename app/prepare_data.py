@@ -7,7 +7,7 @@ from pyspark.sql import functions as F
 spark = SparkSession.builder \
     .appName('data preparation') \
     .master("local") \
-    .config("spark.sql.parquet.enableVectorizedReader", "true") \
+    .config("spark.sql.parquet.enableVectorizedReader", "false") \
     .getOrCreate()
 
 sc = spark.sparkContext
@@ -18,6 +18,9 @@ df = df.select(['id', 'title', 'text']) \
     .filter(F.col('text').isNotNull() & (F.col('text') != '')) \
     .sample(fraction=100 * n / df.count(), seed=0) \
     .limit(n)
+
+
+os.makedirs("data", exist_ok=True)
 
 
 def create_doc(row):

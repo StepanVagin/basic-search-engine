@@ -74,6 +74,8 @@ echo "--- Loading data into Cassandra via PySpark ---"
 spark-submit \
     --master yarn \
     --deploy-mode client \
+    --driver-memory 2g \
+    --executor-memory 2g \
     --packages com.datastax.spark:spark-cassandra-connector_2.12:3.4.1 \
     --conf spark.cassandra.connection.host=cassandra-server \
     --conf spark.cassandra.connection.port=9042 \

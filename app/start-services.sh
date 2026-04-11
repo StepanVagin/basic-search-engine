@@ -61,7 +61,7 @@ hdfs dfs -chmod 744 /apps/spark/jars
 
 
 # Copy all jars to HDFS (skip if already uploaded)
-if ! hdfs dfs -test -e /apps/spark/jars/spark-core_2.12*.jar; then
+if ! hdfs dfs -ls "/apps/spark/jars/spark-core_2.12*.jar" &>/dev/null; then
   hdfs dfs -put /usr/local/spark/jars/* /apps/spark/jars/
   hdfs dfs -chmod +rx /apps/spark/jars/
 else

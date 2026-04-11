@@ -11,12 +11,12 @@ unset PYSPARK_PYTHON
 
 # DOWNLOAD e.parquet or any parquet file before you run this
 
-if hdfs dfs -test -e /data; then
+if hdfs dfs -test -e /input/data; then
     echo "Data already in HDFS, skipping prepare step."
 else
     rm -f data/*.txt && \
     hdfs dfs -put -f e.parquet / && \
-        spark-submit --driver-memory 512m prepare_data.py && \
+        spark-submit --driver-memory 2g prepare_data.py && \
         echo "Putting data to hdfs" && \
         hdfs dfs -put data / && \
         hdfs dfs -ls /data && \
