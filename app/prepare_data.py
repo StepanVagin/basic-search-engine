@@ -42,7 +42,7 @@ def parse_doc(path_content):
     return f"{doc_id}\t{title}\t{content}"
 
 
-sc.wholeTextFiles("data/") \
+sc.wholeTextFiles("file:///app/data/") \
     .map(parse_doc) \
     .coalesce(1) \
     .saveAsTextFile("/input/data")

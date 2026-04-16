@@ -42,10 +42,15 @@ sc = spark.sparkContext
 # ---------------------------------------------------------------------------
 
 # Corpus-level statistics (single row)
-corpus_row = spark.read \
+corpus_rows = spark.read \
     .format("org.apache.spark.sql.cassandra") \
     .options(table="corpus_stats", keyspace="search_engine") \
-    .load().collect()[0]
+    .load().collect()
+if not corpus_rows:
+    print("ERROR: corpus_stats table is empty — run the indexing pipeline first (bash index.sh).")
+    spark.stop()
+    sys.exit(1)
+corpus_row = corpus_rows[0]
 
 N = corpus_row["total_docs"]
 avgdl = corpus_row["avg_doc_length"]
