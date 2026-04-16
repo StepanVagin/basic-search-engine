@@ -28,3 +28,5 @@ bash index.sh
 
 # Run the ranker
 bash search.sh "English breakfast"
+bash search.sh "Europe"
+bash search.sh "Elvis Presley"
