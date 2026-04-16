@@ -9,7 +9,6 @@ spark = SparkSession.builder \
     .config("spark.cassandra.connection.port", "9042") \
     .config("spark.cassandra.output.batch.size.rows", "100") \
     .config("spark.cassandra.output.concurrent.writes", "2") \
-    .config("spark.cassandra.output.throughput_mb_per_sec", "2") \
     .getOrCreate()
 
 sc = spark.sparkContext
@@ -22,7 +21,7 @@ index_rdd = sc.textFile("/indexer/index") \
 index_df = index_rdd.toDF(["term", "doc_id", "tf"]) \
     .withColumn("tf", F.col("tf").cast(IntegerType()))
 
-index_df.repartition(1).write \
+index_df.write \
     .format("org.apache.spark.sql.cassandra") \
     .options(table="inverted_index", keyspace="search_engine") \
     .mode("append") \
@@ -37,7 +36,7 @@ vocab_rdd = sc.textFile("/indexer/vocabulary") \
 vocab_df = vocab_rdd.toDF(["term", "df"]) \
     .withColumn("df", F.col("df").cast(IntegerType()))
 
-vocab_df.repartition(1).write \
+vocab_df.write \
     .format("org.apache.spark.sql.cassandra") \
     .options(table="vocabulary", keyspace="search_engine") \
     .mode("append") \
@@ -52,7 +51,7 @@ doc_stats_rdd = sc.textFile("/indexer/doc_stats") \
 doc_stats_df = doc_stats_rdd.toDF(["doc_id", "doc_length"]) \
     .withColumn("doc_length", F.col("doc_length").cast(IntegerType()))
 
-doc_stats_df.repartition(1).write \
+doc_stats_df.write \
     .format("org.apache.spark.sql.cassandra") \
     .options(table="doc_stats", keyspace="search_engine") \
     .mode("append") \
@@ -87,7 +86,7 @@ doc_meta_rdd = sc.textFile("/input/data") \
 doc_meta_df = doc_meta_rdd.toDF(["doc_id", "title", "text"]) \
     .select("doc_id", F.regexp_replace(F.col("title"), "_", " ").alias("title"))
 
-doc_meta_df.repartition(1).write \
+doc_meta_df.write \
     .format("org.apache.spark.sql.cassandra") \
     .options(table="doc_meta", keyspace="search_engine") \
     .mode("append") \
