@@ -7,8 +7,9 @@ spark = SparkSession.builder \
     .appName("Store Index to Cassandra") \
     .config("spark.cassandra.connection.host", "cassandra-server") \
     .config("spark.cassandra.connection.port", "9042") \
-    .config("spark.cassandra.output.batch.size.rows", "100") \
-    .config("spark.cassandra.output.concurrent.writes", "2") \
+    .config("spark.cassandra.output.batch.size.rows", "50") \
+    .config("spark.cassandra.output.concurrent.writes", "1") \
+    .config("spark.cassandra.output.batch.grouping.buffer.size", "100") \
     .getOrCreate()
 
 sc = spark.sparkContext
