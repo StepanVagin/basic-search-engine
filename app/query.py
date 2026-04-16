@@ -34,8 +34,8 @@ spark = SparkSession.builder \
     .config("spark.cassandra.connection.host", "cassandra-server") \
     .config("spark.cassandra.connection.port", "9042") \
     .config("spark.cassandra.input.fetch.size_in_rows", "50") \
-    .config("spark.cassandra.input.split.size_in_mb", "4") \
-    .config("spark.cassandra.concurrent.reads", "2") \
+    .config("spark.cassandra.concurrent.reads", "1") \
+    .config("spark.cassandra.input.reads_per_sec", "100") \
     .getOrCreate()
 
 sc = spark.sparkContext
