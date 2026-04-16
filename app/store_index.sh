@@ -17,6 +17,7 @@ from cassandra.cluster import Cluster
 
 cluster = Cluster(['cassandra-server'])
 session = cluster.connect()
+session.default_timeout = 60
 
 session.execute("""
     CREATE KEYSPACE IF NOT EXISTS search_engine
@@ -74,8 +75,9 @@ echo "--- Loading data into Cassandra via PySpark ---"
 spark-submit \
     --master yarn \
     --deploy-mode client \
-    --driver-memory 2g \
-    --executor-memory 2g \
+    --driver-memory 1g \
+    --executor-memory 512m \
+    --num-executors 1 \
     --packages com.datastax.spark:spark-cassandra-connector_2.12:3.4.1 \
     --conf spark.cassandra.connection.host=cassandra-server \
     --conf spark.cassandra.connection.port=9042 \

@@ -15,11 +15,11 @@ export PYSPARK_PYTHON=./.venv/bin/python
 spark-submit \
     --master yarn \
     --deploy-mode client \
-    --driver-memory 2g \
+    --driver-memory 1g \
+    --executor-memory 512m \
+    --num-executors 1 \
     --archives /app/.venv.tar.gz#.venv \
     --packages com.datastax.spark:spark-cassandra-connector_2.12:3.4.1 \
     --conf spark.cassandra.connection.host=cassandra-server \
     --conf spark.cassandra.connection.port=9042 \
-    --conf spark.sql.extensions=com.datastax.spark.connector.CassandraSparkExtensions \
-    --conf spark.sql.catalog.cassandra=com.datastax.spark.connector.datasource.CassandraCatalog \
     query.py "$@"
