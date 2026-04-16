@@ -1,3 +1,4 @@
+.DS_Store
 */kaggle.json
 *.parquet
 .venv.tar.gz

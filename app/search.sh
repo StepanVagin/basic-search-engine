@@ -10,10 +10,13 @@ fi
 source .venv/bin/activate
 
 export PYSPARK_DRIVER_PYTHON=$(which python)
+export PYSPARK_PYTHON=./.venv/bin/python
 
 spark-submit \
-    --master local[*] \
+    --master yarn \
+    --deploy-mode client \
     --driver-memory 2g \
+    --archives /app/.venv.tar.gz#.venv \
     --packages com.datastax.spark:spark-cassandra-connector_2.12:3.4.1 \
     --conf spark.cassandra.connection.host=cassandra-server \
     --conf spark.cassandra.connection.port=9042 \

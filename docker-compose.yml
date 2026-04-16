@@ -2,7 +2,6 @@ services:
   cluster-master:
     image: firasj/spark-docker-cluster
     container_name: cluster-master
-    mem_limit: 6g
     ports:
       - "8088:8088"
       - "4040:4040"
@@ -11,65 +10,43 @@ services:
       - "9870:9870"
     volumes:
       - "./app:/app"
-      - hdfs-namenode:/usr/local/hadoop/hdfs/namenode
     networks:
       - spark-cluster
     depends_on:
-      cluster-slave-1:
-        condition: service_healthy
-      cassandra-server:
-        condition: service_healthy
+      - cluster-slave-1
+      - cassandra-server
     hostname: cluster-master
     tty: true
     working_dir: /app
-    entrypoint:
+    # You can comment the entrypoint to run the script manually inside the container
+    entrypoint: 
       - bash
       - /app/app.sh
-
+    
   cluster-slave-1:
     image: firasj/spark-docker-cluster
     container_name: cluster-slave-1
-    mem_limit: 4g
-    volumes:
-      - hdfs-datanode:/usr/local/hadoop/hdfs/datanode
     networks:
       - spark-cluster
     hostname: cluster-slave-1
     tty: true
-    entrypoint:
-      - bash
-      - -c
-      - "service ssh restart && tail -f /dev/null"
-    healthcheck:
-      test: ["CMD", "bash", "-c", "service ssh status | grep -q running"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
+  # cluster-slave-2:
+  #   image: firasj/spark-docker-cluster
+  #   container_name: cluster-slave-2
+  #   networks:
+  #     - spark-cluster
+  #   depends_on:
+  #     - cluster-slave-1
+  #   hostname: cluster-slave-2
+  #   tty: true
   cassandra-server:
     image: cassandra
     container_name: cassandra-server
-    mem_limit: 3g
-    volumes:
-      - cassandra-data:/var/lib/cassandra
-    environment:
-      MAX_HEAP_SIZE: "1G"
-      HEAP_NEWSIZE: "256M"
     ports:
-      # 7000 conflicts with macOS AirPlay Receiver; CQL is enough for host access
-      - "9042:9042"
+      - "7000:7000"
     networks:
       - spark-cluster
-    healthcheck:
-      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
-      interval: 15s
-      timeout: 10s
-      retries: 10
-
-volumes:
-  hdfs-namenode:
-  hdfs-datanode:
-  cassandra-data:
+    
 
 networks:
   spark-cluster:
