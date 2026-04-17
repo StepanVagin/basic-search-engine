@@ -13,7 +13,7 @@ spark = SparkSession.builder \
 sc = spark.sparkContext
 
 df = spark.read.parquet("/e.parquet")
-n = 100
+n = 120
 df = df.select(['id', 'title', 'text']) \
     .filter(F.col('text').isNotNull() & (F.col('text') != '')) \
     .sample(fraction=100 * n / df.count(), seed=0) \
